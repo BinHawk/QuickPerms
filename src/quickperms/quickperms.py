@@ -2,8 +2,13 @@ import valkey
 from typing import List
 
 default_glob = '&'
-default_valkey_host = 'localhost'
-default_valkey_port = 6379
+
+db = valkey.Valkey(
+    host = os.getenv('VALKEY_HOST', 'localhost'),
+    port = os.getenv('VALKEY_PORT', 6379),
+    db = os.getenv('VALKKEY_DB', 0),
+    password = os.getenv('VALKKEY_PASS')
+)
 
 ###
 # Core function
@@ -63,20 +68,17 @@ def perm_to_list(perm_raw: str, glob: str = default_glob) -> List[str]:
 ###
 
 # O(1)
-def valkey_query_user(uid: str, host: str = default_valkey_host, port: int = default_valkey_port, db: int = 0) -> List[str]:
-    print(uid)
-    db = valkey.Valkey(host=host, port=port, db=db)
+def valkey_query_user(uid: str) -> List[str]:
     # Map converts incoming b'' to ''
     x = list(map(lambda member: member.decode('utf-8'), db.smembers('user:' + uid)))
     return x
 
 # O(1)
-def valkey_query_perm(perm: str, host: str = default_valkey_host, port: int = default_valkey_port, db: int = 0) -> List[str]:
-    db = valkey.Valkey(host=host, port=port, db=db)
+def valkey_query_perm(perm: str) -> List[str]:
     return list(map(lambda member: member.decode('utf-8'), db.smembers('perm:' + perm)))
 
 # O(1)
-def valkey_check(uid: str, perm: str, host: str = default_valkey_host, port: int = default_valkey_port, db: int = 0) -> bool:
+def valkey_check(uid: str, perm: str) -> bool:
     user_perms =  valkey_query_user(uid, host=host, port=port, db=db)
     perm_list = perm_to_list(perm)
     intersection = list(set(user_perms) & set(perm_list))
@@ -87,8 +89,7 @@ def valkey_check(uid: str, perm: str, host: str = default_valkey_host, port: int
 
 # O(2)
 # O(3) if requires != ''
-def valkey_set(uid: str, perm_raw: str, requires: str = '', glob: str = default_glob, host: str = default_valkey_host, port: int = default_valkey_port, db: int = 0) -> bool:
-    db = valkey.Valkey(host=host, port=port, db=db)
+def valkey_set(uid: str, perm_raw: str, requires: str = '', glob: str = default_glob) -> bool:
     requires = requires.strip('.')
     perm = perm_raw.replace('*', glob).strip('.')
     if requires != '' and db.sismember('perm:' + requires, uid) or requires == '':
