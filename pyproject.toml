@@ -1,0 +1,23 @@
+[project]
+name = "quickperms"
+version = "0.1.0"
+description = "Quick Permission System Inspired by LuckPerms"
+readme = "README.md"
+authors = [
+    { name = "BinHawk", email = "BinHawk@giles.pro"}
+]
+requires-python = ">=3.13"
+dependencies = [
+    "valkey>=6.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "setuptools>=80.9.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"
+
