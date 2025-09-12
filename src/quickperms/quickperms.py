@@ -1,12 +1,15 @@
-import valkey
+import valkey, os
 from typing import List
 
 default_glob = '&'
 
+
+print(int(os.getenv('VALKKEY_DB', '0')))
+
 db = valkey.Valkey(
     host = os.getenv('VALKEY_HOST', 'localhost'),
-    port = os.getenv('VALKEY_PORT', 6379),
-    db = os.getenv('VALKKEY_DB', 0),
+    port = int(os.getenv('VALKEY_PORT', '6379')),
+    db = int(os.getenv('VALKKEY_DB', '0')),
     password = os.getenv('VALKKEY_PASS')
 )
 
@@ -70,8 +73,7 @@ def perm_to_list(perm_raw: str, glob: str = default_glob) -> List[str]:
 # O(1)
 def valkey_query_user(uid: str) -> List[str]:
     # Map converts incoming b'' to ''
-    x = list(map(lambda member: member.decode('utf-8'), db.smembers('user:' + uid)))
-    return x
+    return list(map(lambda member: member.decode('utf-8'), db.smembers('user:' + uid)))
 
 # O(1)
 def valkey_query_perm(perm: str) -> List[str]:
@@ -79,7 +81,7 @@ def valkey_query_perm(perm: str) -> List[str]:
 
 # O(1)
 def valkey_check(uid: str, perm: str) -> bool:
-    user_perms =  valkey_query_user(uid, host=host, port=port, db=db)
+    user_perms =  valkey_query_user(uid)
     perm_list = perm_to_list(perm)
     intersection = list(set(user_perms) & set(perm_list))
     if len(intersection) >= 1:
