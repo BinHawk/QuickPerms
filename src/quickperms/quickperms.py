@@ -105,5 +105,5 @@ def valkey_set(uid: str, perm_raw: str, requires: str = '', glob: str = default_
 # Alias Functions
 ###
 
-vset   = valkey_set
-vcheck = valkey_check
+qset   = valkey_set
+qcheck = valkey_check
