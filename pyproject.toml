@@ -1,7 +1,7 @@
 [project]
 name = "quickperms"
 version = "0.1.2"
-description = "Quick Permission System Inspired by LuckPerms"
+description = "Quick Permission Library Inspired by LuckPerms"
 readme = "README.md"
 authors = [
     { name = "BinHawk", email = "BinHawk@giles.pro"}
