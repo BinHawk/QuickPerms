@@ -38,7 +38,7 @@ vcheck('john', 'gameserver.start.foo') == True
 vcheck('john', 'gameserver.start.bar') == True
 ```
 
-Now `john` needs to stop the server and start the server. Lets assign him every single permission under gameserver
+In the future `john` might need to stop and start the server. Lets assign him every single permission under gameserver
 
 ```python
 vset('john`, 'gameserver.**')
@@ -76,13 +76,12 @@ uv add quickperms
 ## Configuration
 Quickperms uses environment variables to get database info.
 
-`VALKEY_HOST` == `localhost`or`valkey://valkey-container`or`https://example.com/valkey-db`
-
-`VALKEY_PORT` == `6379`
-
-`VALKEY_DB` == `0` or may be 0-15
-
-`VALKEY_PASS` == unset or`password`
+| Environment Variable  | Type | Acceptable Values     |
+| --------------------- | ---- | --------------------- |
+| VALKEY_HOST           | str  | `localhost`or`valkey://valkey-container`or`https://example.com/valkey-db` |
+| VALKEY_PORT           | int  | `6379`                |
+| VALKEY_DB             | int  | `0` or may be 0-15    |
+| VALKEY_PASS           | str  | unset or`password`    |
 
 <br>
 
