@@ -70,24 +70,37 @@ def perm_to_list(perm_raw: str, glob: str = default_glob) -> List[str]:
 # Valkey Functions
 ###
 
-# O(1)
-def valkey_query_user(uid: str) -> List[str]:
+# O(N) where N = len(db.smembers('user:'+uid))
+def valkey_get_user_perms(uid: str) -> List[str]:
     # Map converts incoming b'' to ''
     return list(map(lambda member: member.decode('utf-8'), db.smembers('user:' + uid)))
 
-# O(1)
-def valkey_query_perm(perm: str) -> List[str]:
+# O(N) where N = len(db.smembers('user:'+uid))
+def valkey_get_perm_users(perm: str) -> List[str]:
     return list(map(lambda member: member.decode('utf-8'), db.smembers('perm:' + perm)))
 
-# O(1)
-def valkey_check(uid: str, perm: str) -> bool:
-    user_perms =  valkey_query_user(uid)
+# O(N) where N = len(db.smembers('user:'+uid))
+def valkey_check_user_by_get(uid: str, perm: str) -> bool:
+    user_perms =  valkey_get_user_perms(uid)
     perm_list = perm_to_list(perm)
     intersection = list(set(user_perms) & set(perm_list))
     if len(intersection) >= 1:
         return True
     else:
         return False
+
+#def valkey_check_perm_by_get(permission: str, uids: List[str]) -> bool:
+
+# O(N) where N = len(perm_to_list(permission))
+def valkey_check_user_by_search(uid: str, permission: str) -> bool:
+    perm_list = perm_to_list(permission)
+    for perm in perm_list:
+        if db.sismember('user:'+uid, perm):
+            return true
+    return false
+
+def valkey_check_perm_by_search():
+    return
 
 # O(2)
 # O(3) if requires != ''
@@ -101,9 +114,11 @@ def valkey_set(uid: str, perm_raw: str, requires: str = '', glob: str = default_
     else:
         return False
 
+
 ###
 # Alias Functions
 ###
 
 qset   = valkey_set
+valkey_check = valkey_check_user_by_get
 qcheck = valkey_check
